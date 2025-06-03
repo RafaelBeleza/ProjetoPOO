@@ -43,3 +43,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Ignore your sensitive config file ###
+AppConfig.kt
