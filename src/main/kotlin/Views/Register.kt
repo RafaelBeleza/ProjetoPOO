@@ -1,5 +1,6 @@
 package Views
 
+import Objects.User
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -85,7 +86,19 @@ class Register {
                     error.text = "Passwords do not match"
                     error.isVisible = true
                 } else {
+                    val newUser = User().apply {
+                        this.username = username.text.trim()
+                        this.email = email.text.trim()
+                        this.password = password.text.trim()
+                    }
 
+                    try {
+                        newUser.register()
+                        ViewManager.setView(Login().root)
+                    } catch (ex: Exception) {
+                        error.text = ex.message
+                        error.isVisible = true
+                    }
                 }
             }
         }

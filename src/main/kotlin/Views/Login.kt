@@ -1,8 +1,6 @@
 package Views
 
-import Views.Main
-import javafx.animation.FadeTransition
-import javafx.animation.ScaleTransition
+import Objects.User
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -62,14 +60,15 @@ class Login() {
             """.trimIndent()
 
             setOnAction {
-                val email = email.text
-                val password = password.text
+                val newUser = User().apply {
+                    this.email = email.text.trim()
+                    this.password = password.text.trim()
+                }
 
-                if (email == "admin" && password == "1234") {
-                    println("Logged in as Admin")
+                if(newUser.login()){
+                    println("congrats logged the user")
                 } else {
-                    error.text = "Invalid username or password"
-                    error.isVisible = true
+                    println("better luck next time")
                 }
             }
         }

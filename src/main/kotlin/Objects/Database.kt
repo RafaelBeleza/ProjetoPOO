@@ -9,13 +9,13 @@ class Database() {
 
     fun createTables() {
         transaction {
-            SchemaUtils.create(Users)
+            SchemaUtils.create(UserTable)
         }
     }
 
     fun dropTables() {
         transaction {
-            SchemaUtils.drop(Users)
+            SchemaUtils.drop(UserTable)
         }
     }
 

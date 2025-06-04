@@ -1,11 +1,8 @@
 package Views
 
-import javafx.animation.FadeTransition
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
-import javafx.animation.ScaleTransition
 import javafx.animation.Timeline
-import javafx.animation.TranslateTransition
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Button
@@ -13,7 +10,7 @@ import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import javafx.util.Duration
 
-class Main(private val stage: Stage) {
+class TopBar(private val stage: Stage) {
     val root = HBox().apply {
         padding = Insets(10.0)
         alignment = Pos.TOP_RIGHT

@@ -1,5 +1,5 @@
 import Views.Login
-import Views.Main
+import Views.TopBar
 import Views.ViewManager
 import org.jetbrains.exposed.sql.Database
 import javafx.application.Application
@@ -12,7 +12,7 @@ import javafx.stage.StageStyle
 
 class MainApp : Application() {
     override fun start(stage: Stage) {
-        val titleBar = Main(stage)
+        val titleBar = TopBar(stage)
         val loginView = Login()
 
         val layout = BorderPane().apply {
