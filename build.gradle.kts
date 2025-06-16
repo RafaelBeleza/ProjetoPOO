@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.1.10"
     application
+    kotlin("plugin.serialization") version "2.1.10"
 }
 
 group = "org.example"
@@ -21,20 +22,12 @@ val platform = when {
 }
 
 dependencies {
-    implementation("org.jetbrains.exposed:exposed-core:0.43.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.43.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.43.0")
-    implementation("mysql:mysql-connector-java:8.0.33")
-
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-
     implementation("org.openjfx:javafx-base:$javafxVersion:$platform")
     implementation("org.openjfx:javafx-controls:$javafxVersion:$platform")
     implementation("org.openjfx:javafx-graphics:$javafxVersion:$platform")
-
-    implementation("org.mindrot:jbcrypt:0.4")
-
-    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }
 
 application {

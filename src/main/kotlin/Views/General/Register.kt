@@ -1,6 +1,8 @@
-package Views
+package Views.General
 
-import Objects.User
+import Services.postJson
+import Views.ViewManager
+import apiUrl
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Parent
@@ -14,6 +16,14 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+
+@Serializable
+data class RegisterRequest(val username: String, val email: String, val password: String, val confirmPassword: String)
 
 class Register {
     val root: Parent = VBox(16.0).apply {
@@ -57,6 +67,7 @@ class Register {
             textFill = Color.web("#ff4d4f")
             font = Font.font("Segoe UI", FontWeight.NORMAL, 12.0)
             isVisible = false
+            isManaged = false
         }
 
         val registerBtn = Button("Register").apply {
@@ -69,41 +80,35 @@ class Register {
             """.trimIndent()
 
             setOnAction {
-                error.isVisible = false
-                val fields = mapOf(
-                    "Username" to username.text.trim(),
-                    "Email" to email.text.trim(),
-                    "Password" to password.text,
-                    "Confirm Password" to confirmPassword.text
+                val request = RegisterRequest(
+                    username = username.text.trim(),
+                    email = email.text.trim(),
+                    password = password.text.trim() ,
+                    confirmPassword = confirmPassword.text.trim()
                 )
 
-                val emptyField = fields.entries.find { it.value.isEmpty() }
+                val response = postJson("$apiUrl/register", request)
 
-                if (emptyField != null) {
-                    error.text = "${emptyField.key} is required"
-                    error.isVisible = true
-                } else if (password.text != confirmPassword.text) {
-                    error.text = "Passwords do not match"
-                    error.isVisible = true
-                } else {
-                    val newUser = User().apply {
-                        this.username = username.text.trim()
-                        this.email = email.text.trim()
-                        this.password = password.text.trim()
-                    }
+                if (response != null) {
+                    val json = Json { ignoreUnknownKeys = true }
+                    val jsonElement = json.parseToJsonElement(response)
+                    val errorMsg = jsonElement.jsonObject["error"]?.jsonPrimitive?.contentOrNull
+                    val success = jsonElement.jsonObject["success"]?.jsonPrimitive?.contentOrNull
 
-                    try {
-                        newUser.register()
+                    if (success.toBoolean()) {
                         ViewManager.setView(Login().root)
-                    } catch (ex: Exception) {
-                        error.text = ex.message
+                    } else {
+                        error.text = errorMsg ?: "Unknown register error"
                         error.isVisible = true
+                        error.isManaged = true
                     }
+                } else {
+                    println("Error with application try again later")
                 }
             }
         }
 
-        val login = Hyperlink("Create Account").apply {
+        val login = Hyperlink("Login").apply {
             textFill = Color.web("#999")
             style = "-fx-font-size: 12px;"
             setOnAction {

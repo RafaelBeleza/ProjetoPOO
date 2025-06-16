@@ -1,7 +1,9 @@
-import Views.Login
+import JwtUtils.SessionManager
+import JwtUtils.TokenStorage
+import Views.General.Login
+import Views.Main
 import Views.TopBar
 import Views.ViewManager
-import org.jetbrains.exposed.sql.Database
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.stage.Screen
@@ -12,13 +14,23 @@ import javafx.stage.StageStyle
 
 class MainApp : Application() {
     override fun start(stage: Stage) {
-        val titleBar = TopBar(stage)
-        val loginView = Login()
+        val storedToken = TokenStorage.getToken()
+        if (storedToken != null) {
+            SessionManager.token = storedToken
+        }
 
-        val layout = BorderPane().apply {
-            top = titleBar.root
-            center = loginView.root
-            style = "-fx-background-color: #1e1e1e;"
+        val layout: BorderPane = if (SessionManager.token != null) {
+            BorderPane().apply {
+                top = TopBar(stage).root
+                center = Main().root
+                style = "-fx-background-color: #1e1e1e;"
+            }
+        } else {
+            BorderPane().apply {
+                top = TopBar(stage).root
+                center = Login().root
+                style = "-fx-background-color: #1e1e1e;"
+            }
         }
 
         ViewManager.rootLayout = layout
@@ -41,29 +53,7 @@ class MainApp : Application() {
 }
 
 fun main(){
-    val database: Objects.Database = Objects.Database()
 
-    Database.connect(
-        url = dbCon,
-        driver = "com.mysql.cj.jdbc.Driver",
-        user = dbUsername,
-        password = dbPassword
-    )
+    Application.launch(MainApp::class.java)
 
-    println("--------------------")
-    println("1.App")
-    println("2.Debug Mode")
-    val chooseRunMode:Int = readln().toIntOrNull() ?: 1
-    if(chooseRunMode == 1){
-        database.createTables()
-        Application.launch(MainApp::class.java)
-
-    } else if (chooseRunMode == 2){
-        println("--------------------")
-        println("1.Apagar Base de Dados")
-        val chooseDebugMode:Int = readln().toIntOrNull() ?: 1
-        if (chooseDebugMode == 1){
-            database.dropTables()
-        }
-    }
 }
